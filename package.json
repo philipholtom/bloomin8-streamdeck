@@ -1,0 +1,29 @@
+{
+  "name": "bloomin8-frame-streamdeck",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Stream Deck plugin for the BLOOMIN8 e-ink photo frame",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c && ./scripts/build_waker.sh",
+    "watch": "rollup -c -w",
+    "link": "streamdeck link com.pholtom.bloomin8frame.sdPlugin",
+    "restart": "streamdeck restart com.pholtom.bloomin8frame",
+    "validate": "streamdeck validate com.pholtom.bloomin8frame.sdPlugin",
+    "pack": "streamdeck pack com.pholtom.bloomin8frame.sdPlugin --output dist --force"
+  },
+  "dependencies": {
+    "@elgato/streamdeck": "2.1.2",
+    "@elgato/utils": "0.6.0"
+  },
+  "devDependencies": {
+    "@elgato/cli": "1.10.2",
+    "@rollup/plugin-commonjs": "29.0.3",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-typescript": "12.3.0",
+    "@types/node": "20.19.43",
+    "rollup": "4.64.7",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3"
+  }
+}

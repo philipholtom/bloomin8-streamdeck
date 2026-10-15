@@ -1,0 +1,133 @@
+{
+    "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+    "Name": "BLOOMIN8 Frame",
+    "Version": "1.1.0.0",
+    "Author": "Philip Holtom",
+    "Description": "Control a BLOOMIN8 e-ink photo frame: random photo, Bluetooth wake, live status with the current photo, and fresh pictures from NASA, the Met, Wikipedia and more.",
+    "UUID": "com.pholtom.bloomin8frame",
+    "Icon": "imgs/plugin/marketplace",
+    "Category": "BLOOMIN8 Frame",
+    "CategoryIcon": "imgs/plugin/icon",
+    "CodePath": "bin/plugin.js",
+    "SDKVersion": 2,
+    "Software": {
+        "MinimumVersion": "6.9"
+    },
+    "OS": [
+        {
+            "Platform": "mac",
+            "MinimumVersion": "13"
+        }
+    ],
+    "Nodejs": {
+        "Version": "20",
+        "Debug": "enabled"
+    },
+    "Actions": [
+        {
+            "Name": "Random Photo",
+            "UUID": "com.pholtom.bloomin8frame.random",
+            "Icon": "imgs/actions/random/icon",
+            "Tooltip": "Show a random photo that's already on the frame",
+            "PropertyInspectorPath": "ui/random.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/random/key",
+                    "ShowTitle": true,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/random/key",
+                "layout": "layouts/picker.json",
+                "TriggerDescription": {
+                    "Rotate": "Choose gallery",
+                    "Push": "Show a random photo",
+                    "Touch": "Show a random photo"
+                }
+            }
+        },
+        {
+            "Name": "Wake Frame",
+            "UUID": "com.pholtom.bloomin8frame.wake",
+            "Icon": "imgs/actions/wake/icon",
+            "Tooltip": "Wake the frame's Wi-Fi over Bluetooth",
+            "PropertyInspectorPath": "ui/frame.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/wake/key",
+                    "ShowTitle": true,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/wake/key",
+                "layout": "layouts/picker.json",
+                "TriggerDescription": {
+                    "Push": "Wake the frame",
+                    "Touch": "Wake the frame"
+                }
+            }
+        },
+        {
+            "Name": "Frame Status",
+            "UUID": "com.pholtom.bloomin8frame.status",
+            "Icon": "imgs/actions/status/icon",
+            "Tooltip": "Shows the photo on the frame and its battery; press to refresh",
+            "PropertyInspectorPath": "ui/frame.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/status/key",
+                    "ShowTitle": false
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/status/key",
+                "layout": "layouts/status.json",
+                "TriggerDescription": {
+                    "Push": "Refresh (waking if needed)",
+                    "Touch": "Refresh (waking if needed)"
+                }
+            }
+        },
+        {
+            "Name": "Fresh Picture",
+            "UUID": "com.pholtom.bloomin8frame.generated",
+            "Icon": "imgs/actions/generated/icon",
+            "Tooltip": "Fetch a picture from NASA, the Met, Wikipedia and more, and show it",
+            "PropertyInspectorPath": "ui/generated.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/generated/key",
+                    "ShowTitle": true,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/generated/key",
+                "layout": "layouts/picker.json",
+                "TriggerDescription": {
+                    "Rotate": "Choose source",
+                    "Push": "Fetch and show",
+                    "Touch": "Fetch and show"
+                }
+            }
+        }
+    ]
+}

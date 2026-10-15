@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.elgato.com/streamdeck/plugins/layout.json",
+    "id": "com.pholtom.bloomin8frame.status",
+    "items": [
+        { "key": "photo", "type": "pixmap", "rect": [8, 8, 84, 84] },
+        { "key": "battery", "type": "text", "rect": [102, 16, 92, 32], "alignment": "left", "font": { "size": 26, "weight": 600 } },
+        { "key": "status", "type": "text", "rect": [102, 54, 92, 32], "alignment": "left", "color": "#b8b8b8", "font": { "size": 15, "weight": 400 }, "text-overflow": "ellipsis" }
+    ]
+}

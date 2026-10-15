@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="pi.css">
+    <script src="pi.js"></script>
+</head>
+<body>
+    <h3>Frame (shared by all keys)</h3>
+    <div class="row"><label for="frameIP">IP address</label><div class="field"><input type="text" id="frameIP" data-global="frameIP" placeholder="e.g. 192.168.1.50" spellcheck="false"></div></div>
+    <div class="row"><label for="bleName">Bluetooth name</label><div class="field"><input type="text" id="bleName" data-global="bleName" placeholder="the name the frame advertises" spellcheck="false"></div></div>
+    <p class="hint">The Bluetooth name lets keys wake the frame when its Wi-Fi is asleep. The first wake asks for Bluetooth permission for “BLOOMIN8 Frame Waker”.</p>
+    <div class="row"><label for="orientation">Orientation</label><div class="field"><select id="orientation" data-global="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div></div>
+    <h3>This key</h3>
+    <div class="row"><label for="source">Picture from</label><div class="field"><select id="source" data-setting="source">
+        <option value="apod-today">NASA: today’s picture</option>
+        <option value="apod-random">NASA: random picture</option>
+        <option value="met">Met Museum art</option>
+        <option value="wikipedia">Wikipedia Picture of the Day</option>
+        <option value="cat">Random cat</option>
+        <option value="dog">Random dog</option>
+    </select></div></div>
+    <div class="row"><label for="fit">Fit</label><div class="field"><select id="fit" data-setting="fit"><option value="fill">Fill the screen (crop edges)</option><option value="fit">Show it all (black bars)</option></select></div></div>
+    <div class="row"><label for="gallery">Save into</label><div class="field"><select id="gallery" data-setting="gallery" data-galleries><option value="" data-fixed>Default for this source</option></select><button type="button" data-load-galleries>Load</button></div></div>
+    <p class="hint" id="gallery-status">Defaults: NASA, Museum, Wikipedia, Cat Photos, Dog Photos (created if missing).</p>
+</body>
+</html>
