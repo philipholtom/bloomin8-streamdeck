@@ -15,7 +15,8 @@ import type { JsonObject, JsonValue } from "@elgato/utils";
 
 import { debouncer, step } from "../dial";
 import { isBusy, runWithFeedback } from "../feedback";
-import { galleries, galleryImages, show } from "../frame";
+import { show } from "../frame";
+import { forgetListing, imagesIn, knownGalleries, listGalleries } from "../galleries";
 import { globalSettings } from "../settings";
 import { currentStatus, refreshStatus } from "../status";
 import { ensureAwake } from "../wake";
@@ -24,14 +25,6 @@ type Settings = {
     /** One gallery, or empty for any gallery. */
     gallery?: string;
 };
-
-/** The frame's galleries, remembered from the last time they were listed. */
-let knownGalleries: string[] = [];
-
-async function listGalleries(ip: string): Promise<string[]> {
-    knownGalleries = (await galleries(ip)).sort((a, b) => a.localeCompare(b));
-    return knownGalleries;
-}
 
 /**
  * Shows a random photo that's already on the frame. With no gallery chosen,
@@ -42,9 +35,6 @@ async function listGalleries(ip: string): Promise<string[]> {
  */
 @action({ UUID: "com.pholtom.bloomin8frame.random" })
 export class RandomPhotoAction extends SingletonAction<Settings> {
-    /** Gallery listings, kept for a while so repeat presses are quick. */
-    private listings = new Map<string, { names: string[]; at: number }>();
-    private static readonly listingTTL = 15 * 60_000;
     private saveLater = debouncer();
     /** A dial's gallery while it's being turned (saved once it stops). */
     private turning = new Map<string, string>();
@@ -74,7 +64,7 @@ export class RandomPhotoAction extends SingletonAction<Settings> {
     override async onDialRotate(ev: DialRotateEvent<Settings>): Promise<void> {
         const dial = ev.action;
         if (isBusy(dial.id)) return;
-        if (knownGalleries.length === 0) {
+        if (knownGalleries().length === 0) {
             await dial.setFeedback({ status: "Listing galleries…" });
             try {
                 await listGalleries(globalSettings().frameIP ?? "");
@@ -84,7 +74,7 @@ export class RandomPhotoAction extends SingletonAction<Settings> {
             }
         }
         const current = this.turning.get(dial.id) ?? ev.payload.settings.gallery ?? "";
-        const next = step(["", ...knownGalleries], current, ev.payload.ticks);
+        const next = step(["", ...knownGalleries()], current, ev.payload.ticks);
         this.turning.set(dial.id, next);
         await this.drawDial(dial, next);
         this.saveLater(dial.id, () => {
@@ -123,7 +113,7 @@ export class RandomPhotoAction extends SingletonAction<Settings> {
 
                 // Try a few galleries in case one turns out to be empty.
                 for (const gallery of [...pool].sort(() => Math.random() - 0.5).slice(0, 4)) {
-                    const names = await this.imagesIn(frameIP, gallery);
+                    const names = await imagesIn(frameIP, gallery);
                     const choices = names.filter((name) => `/gallerys/${gallery}/${name}` !== current);
                     if (choices.length === 0) continue;
                     const pick = choices[Math.floor(Math.random() * choices.length)];
@@ -131,7 +121,7 @@ export class RandomPhotoAction extends SingletonAction<Settings> {
                     try {
                         await show(frameIP, `/gallerys/${gallery}/${pick}`);
                     } catch (error) {
-                        this.listings.delete(gallery); // maybe the listing was stale
+                        forgetListing(gallery); // maybe the listing was stale
                         throw error;
                     }
                     void refreshStatus();
@@ -141,14 +131,6 @@ export class RandomPhotoAction extends SingletonAction<Settings> {
             },
             restore,
         );
-    }
-
-    private async imagesIn(ip: string, gallery: string): Promise<string[]> {
-        const cached = this.listings.get(gallery);
-        if (cached && Date.now() - cached.at < RandomPhotoAction.listingTTL) return cached.names;
-        const names = await galleryImages(ip, gallery);
-        this.listings.set(gallery, { names, at: Date.now() });
-        return names;
     }
 
     /** The settings panel asks for the frame's galleries to fill its menu. */

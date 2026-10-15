@@ -1,0 +1,10 @@
+{
+    "$schema": "https://schemas.elgato.com/streamdeck/plugins/layout.json",
+    "id": "com.pholtom.bloomin8frame.photo",
+    "items": [
+        { "key": "photo", "type": "pixmap", "rect": [8, 8, 84, 84] },
+        { "key": "label", "type": "text", "rect": [100, 8, 94, 20], "alignment": "left", "color": "#9a9a9a", "font": { "size": 14, "weight": 500 }, "text-overflow": "ellipsis" },
+        { "key": "value", "type": "text", "rect": [100, 32, 94, 30], "alignment": "left", "font": { "size": 22, "weight": 600 }, "text-overflow": "ellipsis" },
+        { "key": "status", "type": "text", "rect": [100, 68, 94, 22], "alignment": "left", "color": "#b8b8b8", "font": { "size": 14, "weight": 400 }, "text-overflow": "ellipsis" }
+    ]
+}

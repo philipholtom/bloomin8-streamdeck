@@ -1,9 +1,9 @@
 {
     "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
     "Name": "BLOOMIN8 Frame",
-    "Version": "1.1.0.0",
+    "Version": "1.2.0.0",
     "Author": "Philip Holtom",
-    "Description": "Control a BLOOMIN8 e-ink photo frame: random photo, Bluetooth wake, live status with the current photo, and fresh pictures from NASA, the Met, Wikipedia and more.",
+    "Description": "Control a BLOOMIN8 e-ink photo frame from keys and dials: random photo, browse, previous, send from clipboard or Finder, fresh pictures from NASA, the Met and more, remove photos, Bluetooth wake, and live status with a low-battery warning.",
     "UUID": "com.pholtom.bloomin8frame",
     "Icon": "imgs/plugin/marketplace",
     "Category": "BLOOMIN8 Frame",
@@ -126,6 +126,112 @@
                     "Rotate": "Choose source",
                     "Push": "Fetch and show",
                     "Touch": "Fetch and show"
+                }
+            }
+        },
+        {
+            "Name": "Previous Photo",
+            "UUID": "com.pholtom.bloomin8frame.previous",
+            "Icon": "imgs/actions/previous/icon",
+            "Tooltip": "Go back to the photos the frame showed before",
+            "PropertyInspectorPath": "ui/frame.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/previous/key",
+                    "ShowTitle": false,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/previous/key",
+                "layout": "layouts/photo.json",
+                "TriggerDescription": {
+                    "Rotate": "Look back through history",
+                    "Push": "Show it",
+                    "Touch": "Show it"
+                }
+            }
+        },
+        {
+            "Name": "Browse Gallery",
+            "UUID": "com.pholtom.bloomin8frame.browse",
+            "Icon": "imgs/actions/browse/icon",
+            "Tooltip": "Turn to flick through a gallery's photos, push to show one",
+            "PropertyInspectorPath": "ui/browse.html",
+            "Controllers": [
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/browse/key",
+                    "ShowTitle": true
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/browse/key",
+                "layout": "layouts/photo.json",
+                "TriggerDescription": {
+                    "Rotate": "Browse photos",
+                    "Push": "Show this photo",
+                    "Touch": "Show (hold: next gallery)",
+                    "LongTouch": "Next gallery"
+                }
+            }
+        },
+        {
+            "Name": "Remove from Frame",
+            "UUID": "com.pholtom.bloomin8frame.remove",
+            "Icon": "imgs/actions/remove/icon",
+            "Tooltip": "Delete the photo that's showing (press twice to confirm)",
+            "PropertyInspectorPath": "ui/frame.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/remove/key",
+                    "ShowTitle": false,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/remove/key",
+                "layout": "layouts/photo.json",
+                "TriggerDescription": {
+                    "Push": "Push twice to delete",
+                    "Touch": "Tap twice to delete"
+                }
+            }
+        },
+        {
+            "Name": "Send to Frame",
+            "UUID": "com.pholtom.bloomin8frame.send",
+            "Icon": "imgs/actions/send/icon",
+            "Tooltip": "Send the clipboard's image, or the image selected in Finder",
+            "PropertyInspectorPath": "ui/send.html",
+            "Controllers": [
+                "Keypad",
+                "Encoder"
+            ],
+            "States": [
+                {
+                    "Image": "imgs/actions/send/key",
+                    "ShowTitle": true,
+                    "TitleAlignment": "bottom"
+                }
+            ],
+            "Encoder": {
+                "Icon": "imgs/actions/send/key",
+                "layout": "layouts/picker.json",
+                "TriggerDescription": {
+                    "Rotate": "Clipboard or Finder",
+                    "Push": "Send",
+                    "Touch": "Send"
                 }
             }
         }

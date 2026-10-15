@@ -1,10 +1,15 @@
 import streamDeck from "@elgato/streamdeck";
 
 import { FrameStatusAction } from "./actions/frame-status";
+import { BrowseAction } from "./actions/browse";
 import { GeneratedContentAction } from "./actions/generated-content";
+import { PreviousAction } from "./actions/previous";
 import { RandomPhotoAction } from "./actions/random-photo";
+import { RemoveAction } from "./actions/remove";
+import { SendAction } from "./actions/send";
 import { WakeFrameAction } from "./actions/wake-frame";
-import { loadGlobalSettings } from "./settings";
+import { loadGlobalSettings, onGlobalSettingsChanged } from "./settings";
+import { redrawStatus } from "./status";
 
 streamDeck.logger.setLevel("info");
 
@@ -12,6 +17,11 @@ streamDeck.actions.registerAction(new RandomPhotoAction());
 streamDeck.actions.registerAction(new WakeFrameAction());
 streamDeck.actions.registerAction(new FrameStatusAction());
 streamDeck.actions.registerAction(new GeneratedContentAction());
+streamDeck.actions.registerAction(new PreviousAction());
+streamDeck.actions.registerAction(new BrowseAction());
+streamDeck.actions.registerAction(new RemoveAction());
+streamDeck.actions.registerAction(new SendAction());
 
 await streamDeck.connect();
 await loadGlobalSettings();
+onGlobalSettingsChanged(redrawStatus);

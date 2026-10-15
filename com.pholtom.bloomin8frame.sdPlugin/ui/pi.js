@@ -16,8 +16,8 @@ function send(event, payload) {
 }
 
 function fill() {
-    document.querySelectorAll("[data-global]").forEach((el) => setValue(el, globals[el.dataset.global]));
-    document.querySelectorAll("[data-setting]").forEach((el) => setValue(el, settings[el.dataset.setting]));
+    document.querySelectorAll("[data-global]").forEach((el) => setValue(el, globals[el.dataset.global] ?? el.dataset.default));
+    document.querySelectorAll("[data-setting]").forEach((el) => setValue(el, settings[el.dataset.setting] ?? el.dataset.default));
 }
 
 function setValue(el, value) {

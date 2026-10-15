@@ -149,3 +149,27 @@ export async function upload(ip: string, gallery: string, filename: string, jpeg
 export function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+/** Deletes one image from a gallery on the frame. */
+export async function deleteImage(ip: string, gallery: string, filename: string): Promise<void> {
+    await request(`${base(ip)}/image/delete?${new URLSearchParams({ image: filename, gallery })}`, { method: "POST", timeoutMs: 15000 });
+}
+
+/** Splits `/gallerys/<gallery>/<file>` into its parts; undefined for anything else. */
+export function splitImagePath(imagePath: string): { gallery: string; filename: string } | undefined {
+    const match = /^\/gallerys\/([^/]+)\/([^/]+)$/.exec(imagePath);
+    return match ? { gallery: match[1], filename: match[2] } : undefined;
+}
+
+/**
+ * Whether a photo still exists on the frame. A HEAD request, which the frame
+ * answers quickly without sending the image. Unknown (asleep) counts as yes.
+ */
+export async function imageExists(ip: string, imagePath: string): Promise<boolean> {
+    try {
+        const response = await fetch(`${base(ip)}${encodePath(imagePath)}`, { method: "HEAD", signal: AbortSignal.timeout(8000) });
+        return response.status !== 404;
+    } catch {
+        return true;
+    }
+}

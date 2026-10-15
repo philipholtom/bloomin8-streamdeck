@@ -8,7 +8,8 @@ import { messageFace } from "./keyface";
  * (the plain ⚠ alone doesn't say what went wrong). Ignores presses while busy.
  *
  * Keys show messages as their image. Dials show them in the layout's
- * `status` item, then call `restore` to redraw their usual face.
+ * `status` item. Afterwards `restore` redraws the usual face (keys without
+ * one go back to their manifest image).
  */
 const busy = new Set<string>();
 
@@ -25,9 +26,10 @@ export async function runWithFeedback(
     busy.add(action.id);
     const dial = action.isDial() ? action : undefined;
     const progress = (message: string) => (dial ? dial.setFeedback({ status: message }) : action.setImage(messageFace(message)));
+    // Keys go back to their manifest image unless they draw their own face.
     const reset = async () => {
-        if (dial) await restore?.();
-        else await action.setImage();
+        if (restore) await restore();
+        else if (!dial) await action.setImage();
     };
     try {
         await work(progress);
@@ -61,6 +63,10 @@ export function shortReason(message: string): string {
     if (/didn't come back/i.test(message)) return "Frame didn't wake";
     if (/busy/i.test(message)) return "Frame busy";
     if (/video/i.test(message)) return "Today is a video";
+    if (/No history/i.test(message)) return "No history yet";
+    if (/No image|nothing to send/i.test(message)) return "No image to send";
+    if (/control Finder/i.test(message)) return "Allow Finder access";
+    if (/read that picture/i.test(message)) return "Can't read image";
     if (/timeout|aborted|fetch failed|ECONN|EHOST|not answering/i.test(message)) return "Frame not answering";
     return "Failed";
 }

@@ -1,11 +1,11 @@
 {
   "name": "bloomin8-frame-streamdeck",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Stream Deck plugin for the BLOOMIN8 e-ink photo frame",
   "type": "module",
   "scripts": {
-    "build": "rollup -c && ./scripts/build_waker.sh",
+    "build": "rollup -c && ./scripts/build_helpers.sh",
     "watch": "rollup -c -w",
     "link": "streamdeck link com.pholtom.bloomin8frame.sdPlugin",
     "restart": "pkill -f 'bloomin8frame.sdPlugin/bin/plugin.js'; echo \"Stopped the plugin; Stream Deck relaunches it with the new build within a few seconds.\"",

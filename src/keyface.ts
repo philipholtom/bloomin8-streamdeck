@@ -43,21 +43,31 @@ export function messageFace(message: string, tone: "busy" | "error" = "busy"): s
 }
 
 /**
- * The frame-status key: the current photo filling the key, with a strip at the
- * bottom showing battery (and "asleep" when the frame isn't answering).
+ * A photo filling the key with a caption strip along the bottom — the Status,
+ * Previous and Remove keys. `tone` "warn" makes the strip red.
  */
-export function statusFace(options: { thumbnail?: string; battery?: number; asleep: boolean; label?: string }): string {
-    const { thumbnail, battery, asleep, label } = options;
+export function photoFace(options: { thumbnail?: string; caption?: string; dim?: boolean; tone?: "normal" | "warn"; placeholder?: string }): string {
+    const { thumbnail, caption, dim, tone = "normal", placeholder = "No photo yet" } = options;
     const photo = thumbnail
-        ? `<image x="0" y="0" width="144" height="144" xlink:href="${thumbnail}" href="${thumbnail}" preserveAspectRatio="xMidYMid slice"${asleep ? ' opacity="0.55"' : ""}/>`
-        : `<rect width="144" height="144" fill="#1c1c1e"/><text x="72" y="72" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#8e8e93" text-anchor="middle">No photo yet</text>`;
-    const parts: string[] = [];
-    if (battery !== undefined) parts.push(`${battery}%`);
-    if (asleep) parts.push("asleep");
-    else if (label) parts.push(label);
-    const strip = parts.length
-        ? `<rect x="0" y="112" width="144" height="32" fill="#000000" fill-opacity="0.65"/>` +
-          `<text x="72" y="135" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="${battery !== undefined && battery <= 15 ? "#ff8a80" : "#ffffff"}" text-anchor="middle">${escape(parts.join(" · ").slice(0, 16))}</text>`
+        ? `<image x="0" y="0" width="144" height="144" xlink:href="${thumbnail}" href="${thumbnail}" preserveAspectRatio="xMidYMid slice"${dim ? ' opacity="0.55"' : ""}/>`
+        : `<rect width="144" height="144" fill="#1c1c1e"/><text x="72" y="72" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#8e8e93" text-anchor="middle">${escape(placeholder)}</text>`;
+    const strip = caption
+        ? `<rect x="0" y="112" width="144" height="32" fill="${tone === "warn" ? "#c62828" : "#000000"}" fill-opacity="${tone === "warn" ? "0.9" : "0.65"}"/>` +
+          `<text x="72" y="135" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff" text-anchor="middle">${escape(caption.slice(0, 16))}</text>`
         : "";
-    return svgURL(photo + strip);
+    const border = tone === "warn" ? `<rect x="3" y="3" width="138" height="138" fill="none" stroke="#ff5252" stroke-width="6"/>` : "";
+    return svgURL(photo + strip + border);
+}
+
+/**
+ * The frame-status key: the current photo with battery (and "asleep" when the
+ * frame isn't answering). A low battery turns the strip red with a ⚠ and
+ * outlines the key.
+ */
+export function statusFace(options: { thumbnail?: string; battery?: number; asleep: boolean; low?: boolean }): string {
+    const { thumbnail, battery, asleep, low } = options;
+    const parts: string[] = [];
+    if (battery !== undefined) parts.push(low ? `⚠ ${battery}%` : `${battery}%`);
+    if (asleep) parts.push("asleep");
+    return photoFace({ thumbnail, caption: parts.join(" · ") || undefined, dim: asleep, tone: low ? "warn" : "normal" });
 }

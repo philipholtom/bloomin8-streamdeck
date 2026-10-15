@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="pi.css">
+    <script src="pi.js"></script>
+</head>
+<body>
+    <h3>Frame (shared by all keys)</h3>
+    <div class="row"><label for="frameIP">IP address</label><div class="field"><input type="text" id="frameIP" data-global="frameIP" placeholder="e.g. 192.168.1.50" spellcheck="false"></div></div>
+    <div class="row"><label for="bleName">Bluetooth name</label><div class="field"><input type="text" id="bleName" data-global="bleName" placeholder="the name the frame advertises" spellcheck="false"></div></div>
+    <p class="hint">The Bluetooth name lets keys wake the frame when its Wi-Fi is asleep. The first wake asks for Bluetooth permission for “BLOOMIN8 Frame Waker”.</p>
+    <div class="row"><label for="orientation">Orientation</label><div class="field"><select id="orientation" data-global="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div></div>
+    <div class="row"><label for="lowBattery">Low battery</label><div class="field"><select id="lowBattery" data-global="lowBattery" data-default="20"><option value="off">No warning</option><option value="10">Warn at 10%</option><option value="15">Warn at 15%</option><option value="20">Warn at 20%</option><option value="25">Warn at 25%</option><option value="30">Warn at 30%</option></select></div></div>
+    <div class="row"><label for="batteryNotify">Notification</label><div class="field"><select id="batteryNotify" data-global="batteryNotify" data-default="on"><option value="on">Also post a Mac notification</option><option value="off">Just the Status key</option></select></div></div>
+    <h3>This key</h3>
+    <div class="row"><label for="from">Send</label><div class="field"><select id="from" data-setting="from"><option value="auto">Clipboard, or else Finder’s selection</option><option value="clipboard">The clipboard’s image</option><option value="finder">The image selected in Finder</option></select></div></div>
+    <div class="row"><label for="fit">Fit</label><div class="field"><select id="fit" data-setting="fit" data-default="fit"><option value="fill">Fill the screen (crop edges)</option><option value="fit">Show it all (black bars)</option></select></div></div>
+    <div class="row"><label for="gallery">Save into</label><div class="field"><select id="gallery" data-setting="gallery" data-galleries><option value="" data-fixed>Stream Deck</option></select><button type="button" data-load-galleries>Load</button></div></div>
+    <p class="hint" id="gallery-status">The first Finder send asks you to let Stream Deck control Finder.</p>
+</body>
+</html>

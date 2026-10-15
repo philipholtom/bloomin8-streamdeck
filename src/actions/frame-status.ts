@@ -86,11 +86,14 @@ export class FrameStatusAction extends SingletonAction {
         if (target.isDial()) {
             return target.setFeedback({
                 photo: status.thumbnail ?? "imgs/actions/status/icon.svg",
-                battery: status.battery !== undefined ? `${status.battery}%` : "—",
-                status: !configured ? "Set frame IP" : asleep ? "Asleep" : (status.gallery ?? "Checking…"),
+                battery: {
+                    value: status.battery !== undefined ? `${status.lowBattery ? "⚠ " : ""}${status.battery}%` : "—",
+                    color: status.lowBattery ? "#ff5c5c" : "#ffffff",
+                },
+                status: !configured ? "Set frame IP" : asleep ? "Asleep" : status.lowBattery ? "Charge me" : (status.gallery ?? "Checking…"),
             });
         }
         if (!configured) return target.setImage(messageFace("Set frame IP", "error"));
-        return target.setImage(statusFace({ thumbnail: status.thumbnail, battery: status.battery, asleep }));
+        return target.setImage(statusFace({ thumbnail: status.thumbnail, battery: status.battery, asleep, low: status.lowBattery }));
     }
 }
