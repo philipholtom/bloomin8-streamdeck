@@ -8,6 +8,17 @@ and shares no code or settings with them.
 > [Claude Code](https://claude.com/claude-code), Anthropic's AI coding assistant,
 > from plain-English requests in a chat conversation.
 
+## Install
+
+Download `com.pholtom.bloomin8frame.streamDeckPlugin` from the
+[latest release](https://github.com/philipholtom/bloomin8-streamdeck/releases/latest)
+and double-click it; Stream Deck installs it. Then drag the actions from the
+**BLOOMIN8 Frame** category onto keys or dials, and fill in the frame's IP
+address and Bluetooth name in any action's settings.
+
+Needs an Apple Silicon Mac on macOS 13 or later, and Stream Deck 6.9 or later.
+To build it yourself instead, see [Building](#building).
+
 ## Actions
 
 Every action works on a key and on a Stream Deck + dial (Browse is dial-only).
