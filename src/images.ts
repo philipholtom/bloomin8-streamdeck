@@ -40,6 +40,7 @@ export type Fit = "fill" | "fit";
 export async function renderForFrame(image: Buffer, width: number, height: number, fit: Fit): Promise<Buffer> {
     return withTempDir(async (dir) => {
         const input = path.join(dir, "in");
+        const sized = path.join(dir, "sized.png");
         const output = path.join(dir, "out.jpg");
         await writeFile(input, image);
         const source = await dimensions(input);
@@ -50,12 +51,19 @@ export async function renderForFrame(image: Buffer, width: number, height: numbe
             fit === "fill"
                 ? ["--cropToHeightWidth", String(height), String(width)]
                 : ["--padToHeightWidth", String(height), String(width), "--padColor", "000000"];
+        // Size it into a PNG first, converted to sRGB. Going straight
+        // JPEG-to-JPEG, sips keeps the source's encoding: a progressive (or
+        // greyscale/CMYK) web image stays that way, and the frame's decoder
+        // can't read it ("Image parsing failed"). From the PNG, sips always
+        // writes a plain baseline RGB JPEG with no carried-over metadata.
         await sips([
-            "-s", "format", "jpeg", "-s", "formatOptions", "88",
+            "-s", "format", "png",
+            "--matchTo", "/System/Library/ColorSync/Profiles/sRGB Profile.icc",
             "--resampleHeightWidth", String(scaledH), String(scaledW),
             ...sizing,
-            input, "--out", output,
+            input, "--out", sized,
         ]);
+        await sips(["-s", "format", "jpeg", "-s", "formatOptions", "88", sized, "--out", output]);
         return readFile(output);
     });
 }
