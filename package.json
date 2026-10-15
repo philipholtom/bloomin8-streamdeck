@@ -8,7 +8,7 @@
     "build": "rollup -c && ./scripts/build_waker.sh",
     "watch": "rollup -c -w",
     "link": "streamdeck link com.pholtom.bloomin8frame.sdPlugin",
-    "restart": "streamdeck restart com.pholtom.bloomin8frame",
+    "restart": "pkill -f 'bloomin8frame.sdPlugin/bin/plugin.js'; echo \"Stopped the plugin; Stream Deck relaunches it with the new build within a few seconds.\"",
     "validate": "streamdeck validate com.pholtom.bloomin8frame.sdPlugin",
     "pack": "streamdeck pack com.pholtom.bloomin8frame.sdPlugin --output dist --force"
   },

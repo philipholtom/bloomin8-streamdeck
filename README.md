@@ -60,8 +60,11 @@ Needs Node 20+ and the Xcode Command Line Tools (for `swiftc`).
 npm install
 npm run build      # bundles bin/plugin.js and builds bin/FrameWaker.app
 npm run link       # links the plugin into Stream Deck (first time only)
-npm run restart    # reloads it in Stream Deck after a rebuild
+npm run restart    # reloads it in Stream Deck after a rebuild (stops the plugin; Stream Deck relaunches it)
 ```
+
+Changes to `manifest.json` or the layouts only load when the Stream Deck app
+itself restarts.
 
 `npm run pack` makes an installable `.streamDeckPlugin` file in `dist/`.
 Logs are in `com.pholtom.bloomin8frame.sdPlugin/logs/`.
