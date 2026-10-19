@@ -64,6 +64,7 @@ export function shortReason(message: string): string {
     if (/busy/i.test(message)) return "Frame busy";
     if (/video/i.test(message)) return "Today is a video";
     if (/No history/i.test(message)) return "No history yet";
+    if (/Nothing to favourite/i.test(message)) return "Nothing showing";
     if (/No image|nothing to send/i.test(message)) return "No image to send";
     if (/control Finder/i.test(message)) return "Allow Finder access";
     if (/read that picture/i.test(message)) return "Can't read image";

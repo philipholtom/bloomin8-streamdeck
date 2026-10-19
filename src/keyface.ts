@@ -71,3 +71,15 @@ export function statusFace(options: { thumbnail?: string; battery?: number; asle
     if (asleep) parts.push("asleep");
     return photoFace({ thumbnail, caption: parts.join(" · ") || undefined, dim: asleep, tone: low ? "warn" : "normal" });
 }
+
+/** The Favourite key: a heart, filled when the photo on the frame is already saved. */
+export function heartFace(filled: boolean, note?: string): string {
+    const heart = "M72 116 C 30 86, 18 64, 26 46 C 34 28, 60 26, 72 46 C 84 26, 110 28, 118 46 C 126 64, 114 86, 72 116 Z";
+    const body = filled
+        ? `<path d="${heart}" fill="#ff4d6d"/>`
+        : `<path d="${heart}" fill="none" stroke="#ffffff" stroke-width="8" stroke-linejoin="round"/>`;
+    const caption = note
+        ? `<rect x="0" y="112" width="144" height="32" fill="#000000" fill-opacity="0.65"/><text x="72" y="135" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff" text-anchor="middle">${escape(note)}</text>`
+        : "";
+    return svgURL(`<rect width="144" height="144" fill="#2c2c2e"/>${body}${caption}`);
+}

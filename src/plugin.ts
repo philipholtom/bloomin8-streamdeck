@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { FrameStatusAction } from "./actions/frame-status";
 import { BrowseAction } from "./actions/browse";
+import { FavouriteAction } from "./actions/favourite";
 import { GeneratedContentAction } from "./actions/generated-content";
 import { PreviousAction } from "./actions/previous";
 import { RandomPhotoAction } from "./actions/random-photo";
@@ -31,6 +32,7 @@ streamDeck.actions.registerAction(new PreviousAction());
 streamDeck.actions.registerAction(new BrowseAction());
 streamDeck.actions.registerAction(new RemoveAction());
 streamDeck.actions.registerAction(new SendAction());
+streamDeck.actions.registerAction(new FavouriteAction());
 
 await streamDeck.connect();
 await loadGlobalSettings();

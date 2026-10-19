@@ -29,3 +29,16 @@ export async function imagesIn(ip: string, gallery: string): Promise<string[]> {
 export function forgetListing(gallery: string): void {
     listings.delete(gallery);
 }
+
+/** The cached listing for a gallery, if there is a fresh one (no frame request). */
+export function cachedListing(gallery: string): string[] | undefined {
+    const cached = listings.get(gallery);
+    return cached && Date.now() - cached.at < listingTTL ? cached.names : undefined;
+}
+
+/** Notes a photo just uploaded into a gallery, so its cached listing stays right. */
+export function addToListing(gallery: string, filename: string): void {
+    const cached = listings.get(gallery);
+    if (cached && !cached.names.includes(filename)) cached.names.push(filename);
+    if (!known.includes(gallery)) known = [...known, gallery].sort((a, b) => a.localeCompare(b));
+}

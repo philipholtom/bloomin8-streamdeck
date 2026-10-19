@@ -83,11 +83,12 @@ export async function galleryImages(ip: string, gallery: string): Promise<string
 /**
  * Shows an image already on the frame (`/gallerys/<gallery>/<file>`). While
  * it's still drawing the previous picture the frame refuses, either with HTTP
- * 500 or with `{"status":"fail","msg":"DRAWING"}`, so this retries a few times.
+ * 500 or with `{"status":"fail","msg":"DRAWING"}`. A redraw takes about 20
+ * seconds, so this keeps retrying for a little longer than that.
  */
 export async function show(ip: string, imagePath: string): Promise<void> {
     let lastError: unknown;
-    for (let attempt = 0; attempt < 4; attempt++) {
+    for (let attempt = 0; attempt < 8; attempt++) {
         if (attempt > 0) await sleep(4000);
         try {
             const response = await fetch(`${base(ip)}/show`, {
@@ -122,12 +123,13 @@ export async function ensureGallery(ip: string, name: string): Promise<void> {
 }
 
 /**
- * Uploads a JPEG into a gallery and shows it straight away. The firmware
+ * Uploads a JPEG into a gallery and (unless `showNow` is false) shows it
+ * straight away. The firmware
  * needs the filename to end `_P.jpg` (portrait) or `_L.jpg` (landscape, which
  * it rotates when drawing). Uploads of ~1 MB take tens of seconds.
  */
-export async function upload(ip: string, gallery: string, filename: string, jpeg: Buffer): Promise<string> {
-    const query = new URLSearchParams({ filename, gallery, show_now: "1" });
+export async function upload(ip: string, gallery: string, filename: string, jpeg: Buffer, showNow = true): Promise<string> {
+    const query = new URLSearchParams({ filename, gallery, show_now: showNow ? "1" : "0" });
     const boundary = `Boundary-${crypto.randomUUID()}`;
     const body = Buffer.concat([
         Buffer.from(
