@@ -9,6 +9,8 @@ export type GlobalSettings = {
     lowBattery?: string;
     /** "off" to skip the macOS notification when the battery gets low. */
     batteryNotify?: string;
+    /** Your free themoviedb.org key, for the Movie poster sources. */
+    tmdbKey?: string;
 };
 
 /** The low-battery threshold, or undefined when the warning is off. */

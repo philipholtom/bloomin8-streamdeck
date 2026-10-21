@@ -27,11 +27,12 @@ type Settings = {
     source?: string;
     /** Frame gallery to upload into; empty means the source's own default. */
     gallery?: string;
-    fit?: Fit;
+    /** "auto" (or unset) lets the source choose: posters show whole, the rest fill. */
+    fit?: Fit | "auto";
 };
 
 /**
- * Fetches a fresh picture from the web (NASA, the Met, Wikipedia, cats, dogs),
+ * Fetches a fresh picture from the web (NASA, the Met, Wikipedia, cats, dogs, movie posters),
  * sizes it for the frame, uploads it and shows it.
  *
  * On a dial: turn to choose the source, push or tap to fetch and show.
@@ -114,7 +115,8 @@ export class GeneratedContentAction extends SingletonAction<Settings> {
                 const [width, height] = orientation === "landscape" ? [long, short] : [short, long];
 
                 await progress("Preparing…");
-                const jpeg = await renderForFrame(picture.image, width, height, settings.fit ?? "fill");
+                const fit: Fit = settings.fit === "fill" || settings.fit === "fit" ? settings.fit : chosen.preferredFit ?? "fill";
+                const jpeg = await renderForFrame(picture.image, width, height, fit);
 
                 await progress("Sending…");
                 const gallery = settings.gallery?.trim() || chosen.defaultGallery;

@@ -3,6 +3,8 @@
  * original image bytes; resizing for the frame happens afterwards.
  */
 
+import { globalSettings } from "./settings";
+
 export type Picture = { image: Buffer; title: string };
 
 export type Source = {
@@ -12,6 +14,8 @@ export type Source = {
     short: string;
     /** The frame gallery uploads go into unless the key's settings say otherwise. */
     defaultGallery: string;
+    /** How to fit the picture when the key's Fit setting is "Automatic". Default "fill". */
+    preferredFit?: "fill" | "fit";
     fetch: () => Promise<Picture>;
 };
 
@@ -136,6 +140,88 @@ async function dog(): Promise<Picture> {
     return { image: await getImage(message), title: "Dog" };
 }
 
+// Movie posters from The Movie Database (themoviedb.org). Needs the user's own
+// free key, set in the plugin settings. Posters are 2:3 and the frame 3:4, so
+// these default to showing the whole poster with black bars.
+// This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+type TMDBMovie = { id: number; title?: string; poster_path?: string | null; release_date?: string };
+type TMDBList = { results: TMDBMovie[]; total_pages?: number };
+
+/** `BLOOMIN8_TMDB_BASE` points the plugin at a stand-in server, for tests only. */
+const tmdbBase = process.env.BLOOMIN8_TMDB_BASE ?? "https://api.themoviedb.org";
+const tmdbImageBase = process.env.BLOOMIN8_TMDB_IMAGE_BASE ?? "https://image.tmdb.org";
+
+async function tmdb<T>(path: string, params: Record<string, string> = {}): Promise<T> {
+    const key = (globalSettings().tmdbKey ?? process.env.TMDB_API_KEY ?? "").trim();
+    if (!key) throw new Error("Add your free TMDB key in the plugin settings");
+    const query = new URLSearchParams(params);
+    // A v3 key goes in the URL; the longer v4 "read access token" is a bearer token.
+    const bearer = key.length > 60;
+    if (!bearer) query.set("api_key", key);
+    const response = await fetch(`${tmdbBase}${path}?${query}`, {
+        headers: { "User-Agent": userAgent, ...(bearer ? { Authorization: `Bearer ${key}` } : {}) },
+        signal: AbortSignal.timeout(20000),
+    });
+    if (response.status === 401) throw new Error("TMDB rejected the key — check it in the plugin settings");
+    if (!response.ok) throw new Error(`TMDB returned HTTP ${response.status}`);
+    return response.json() as Promise<T>;
+}
+
+function withPoster(list: TMDBList): TMDBMovie[] {
+    return list.results.filter((movie) => !!movie.poster_path);
+}
+
+async function moviePoster(movie: TMDBMovie): Promise<Picture> {
+    const year = movie.release_date?.slice(0, 4);
+    const title = movie.title ? (year ? `${movie.title} (${year})` : movie.title) : "Movie poster";
+    return { image: await getImage(`${tmdbImageBase}/t/p/original${movie.poster_path}`), title };
+}
+
+/** A random film from a TMDB list, from one of its first few pages. */
+async function movieFromDiscover(sort: string, minVotes: string, maxPages: number): Promise<Picture> {
+    const params = { include_adult: "false", sort_by: sort, "vote_count.gte": minVotes };
+    const first = await tmdb<TMDBList>("/3/discover/movie", { ...params, page: "1" });
+    const page = 1 + randomInt(Math.max(1, Math.min(first.total_pages ?? 1, maxPages)));
+    const list = page === 1 ? first : await tmdb<TMDBList>("/3/discover/movie", { ...params, page: String(page) });
+    const candidates = withPoster(list);
+    if (candidates.length === 0) throw new Error("No films with a poster came back");
+    return moviePoster(candidates[randomInt(candidates.length)]);
+}
+
+const moviePopular = () => movieFromDiscover("popularity.desc", "300", 25);
+const movieTopRated = () => movieFromDiscover("vote_average.desc", "2000", 12);
+
+async function movieNowPlaying(): Promise<Picture> {
+    const region = Intl.DateTimeFormat().resolvedOptions().locale.split("-")[1] ?? "US";
+    const first = await tmdb<TMDBList>("/3/movie/now_playing", { region, page: "1" });
+    const page = 1 + randomInt(Math.max(1, Math.min(first.total_pages ?? 1, 5)));
+    const list = page === 1 ? first : await tmdb<TMDBList>("/3/movie/now_playing", { region, page: String(page) });
+    const candidates = withPoster(list);
+    if (candidates.length === 0) throw new Error("No films with a poster came back");
+    return moviePoster(candidates[randomInt(candidates.length)]);
+}
+
+/** A film released on today's month and day in a random earlier year. */
+async function movieReleasedToday(): Promise<Picture> {
+    const now = new Date();
+    const monthDay = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const years = Array.from({ length: now.getFullYear() - 1950 }, (_, i) => 1950 + i).sort(() => Math.random() - 0.5).slice(0, 25);
+    for (const year of years) {
+        const date = `${year}-${monthDay}`;
+        const list = await tmdb<TMDBList>("/3/discover/movie", {
+            include_adult: "false",
+            sort_by: "popularity.desc",
+            "vote_count.gte": "50",
+            "primary_release_date.gte": date,
+            "primary_release_date.lte": date,
+        });
+        const [found] = withPoster(list);
+        if (found) return moviePoster(found);
+    }
+    throw new Error("Couldn't find a film released on this date");
+}
+
 export const sources: Source[] = [
     { id: "apod-today", short: "NASA today", name: "NASA: today's picture", defaultGallery: "NASA", fetch: apodToday },
     { id: "apod-random", short: "NASA random", name: "NASA: random picture", defaultGallery: "NASA", fetch: apodRandom },
@@ -143,6 +229,10 @@ export const sources: Source[] = [
     { id: "wikipedia", short: "Wikipedia", name: "Wikipedia Picture of the Day", defaultGallery: "Wikipedia", fetch: wikipediaPOTD },
     { id: "cat", short: "Cat", name: "Random cat", defaultGallery: "Cat Photos", fetch: cat },
     { id: "dog", short: "Dog", name: "Random dog", defaultGallery: "Dog Photos", fetch: dog },
+    { id: "movie-popular", short: "Movie: popular", name: "Movie poster: popular", defaultGallery: "Movie Posters", preferredFit: "fit", fetch: moviePopular },
+    { id: "movie-top", short: "Movie: top", name: "Movie poster: top rated", defaultGallery: "Movie Posters", preferredFit: "fit", fetch: movieTopRated },
+    { id: "movie-now", short: "Movie: now", name: "Movie poster: in cinemas now", defaultGallery: "Movie Posters", preferredFit: "fit", fetch: movieNowPlaying },
+    { id: "movie-today", short: "Movie: today", name: "Movie poster: released today", defaultGallery: "Movie Posters", preferredFit: "fit", fetch: movieReleasedToday },
 ];
 
 export function source(id: string | undefined): Source {

@@ -1,7 +1,7 @@
 # BLOOMIN8 Frame — Stream Deck plugin
 
 A standalone Stream Deck plugin for the BLOOMIN8 e-ink photo frame. It talks
-straight to the frame's local HTTP API; it doesn't need the [Blooming8 Mac apps](https://github.com/philipholtom/Blooming8-Mac-Widget)
+straight to the frame's local HTTP API; it doesn't need the [Bloomin8 Mac apps](https://github.com/philipholtom/Bloomin8-Mac-Widget)
 and shares no code or settings with them.
 
 > 🤖 This plugin — every line of code, this README included — was built by
@@ -29,7 +29,7 @@ Every action works on a key and on a Stream Deck + dial (Browse is dial-only).
 | **Browse Gallery** | — | Turn to flick through a gallery's photos, with a thumbnail on the strip · show the one picked. Hold the strip for the next gallery. Starts on whatever the frame is showing. |
 | **Previous Photo** | Goes back to the photo shown before; press again to keep going back. The key shows the photo it will go back to. | Turn back through the history (thumbnails) · show it. |
 | **Send to Frame** | Sends the clipboard's image (a screenshot, "Copy Image", or an image file copied in Finder), or else the image selected in Finder. Uploads go to a "Stream Deck" gallery unless you choose another. | Turn to choose clipboard / Finder · send. |
-| **Fresh Picture** | Fetches a picture from NASA (today's or a random Astronomy Picture of the Day), the Met Museum, Wikipedia's Picture of the Day, or a random cat or dog, and shows it. | Turn to choose the source · fetch and show. |
+| **Fresh Picture** | Fetches a picture from NASA (today's or a random Astronomy Picture of the Day), the Met Museum, Wikipedia's Picture of the Day, a random cat or dog, or a movie poster (popular, top rated, in cinemas now, or released today), and shows it. | Turn to choose the source · fetch and show. |
 | **Favourite This** | Copies the photo that's showing into your Favourites gallery (or one you choose); the original stays put and the screen doesn't redraw. The heart fills in while the photo on the frame is already a favourite. | The photo and whether it's saved · save it. |
 | **Remove from Frame** | Deletes the photo that's showing. The first press shows which photo and asks you to press again within five seconds; then it shows another photo from the same gallery. | Same, push twice. |
 | **Wake Frame** | Wakes the frame's Wi-Fi over Bluetooth and waits until it answers. | Shows whether the frame is awake · wake it. |
